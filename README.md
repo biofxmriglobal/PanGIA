@@ -6,71 +6,49 @@ The software associated web-based user interface for job submission and interact
 
 The docker version is also available at [Docker hub](https://hub.docker.com/r/poeli/pangia). The docker container runs PanGIA-UI that provides a web-based GUI to facilitate users to analyze their datasets through PanGIA and access to results.
 
-<p align="center"><img width="40%" height="40%" src='images/pangia-vis-example.png'></p>
+[//]: # <p align="center"><img width="40%" height="40%" src='images/pangia-vis-example.png'></p>
 
 -------------------------------------------------------------------
 ## REQUIREMENT
 
 Third-party softwares:
 
-* Python >= 3.4
-* BWA >= v0.7
-* samtools >= 1.8
+* Python 3.4 - 3.10
+* Minimap2
+* samtools
 * GNU parallel
-
-PanGIA requires following Python dependencies:
-
-* Pandas >= 0.22
-* SciPy >= 0.14
-* Bokeh >= 0.13 (optional)
+* Gawk
+* Pybedtools
+* Pandas
 
 ------------------------------------------------------------------
 ## DOWNLOAD DATBASE
 
-PanGIA Database can be downloaded from LANL:
-```
-https://edge-dl.lanl.gov/PanGIA/database/
-```
 
-1. Download taxonomy and pathogen metadata:
-    * [metadata-latest.tar.gz](https://edge-dl.lanl.gov/PanGIA/database/PanGIA_20190830_taxonomy.tar.gz)
-
-2. Download BWA index(es) for reference genomes:
-    * NCBI Refseq89 reference and representative genomes -- Bacteria/Archaea/Viruses (BAV) [[tar]](https://edge-dl.lanl.gov/PanGIA/database/PanGIA_20180915_NCBI_genomes_refseq89_BAV.fa.tar)
-    * NCBI Refseq89 complete genomes of CDC biothreat agents (adds) [[tar]](https://edge-dl.lanl.gov/PanGIA/database/PanGIA_20190830_NCBI_genomes_refseq89_adds.fa.tar)
-    * (Optional) NCBI Refseq89 genomes of Plasmodium [[tar]](https://edge-dl.lanl.gov/PanGIA/database/PanGIA_20180915_NCBI_genomes_refseq89_Plasmodium.fa.tar)
-
-3. (Optional) Download BWA indexes for host genomes:
-    * Human genome GRCh38.p12 [[tar]](https://edge-dl.lanl.gov/PanGIA/database/PanGIA_20180915_NCBI_genomes_refseq89_Human_GRCh38.p12.fa.tar)
-    * Human genome alternative assembly CHM1_1.1 [[tar]](https://edge-dl.lanl.gov/PanGIA/database/PanGIA_20180301_NCBI_genomes_refseq86_Human_CHM1_1.1.fa.tar)
-    * JCVI human genome assembly [[tar]](https://edge-dl.lanl.gov/PanGIA/database/PanGIA_20180227_JCVI_human_genome.fa.tar)
-    * Mosquitos genomes [[tar]](https://edge-dl.lanl.gov/PanGIA/database/PanGIA_20180301_NCBI_genomes_refseq86_mosquitos.fa.tar)
-
-4. (Optional) Original sequences databases in FASTA format:
-    * All raw sequences can be found [here](https://edge-dl.lanl.gov/PanGIA/database/FASTA/).
 
 -------------------------------------------------------------------
 ## QUICK INSTALLATION
 
-0. Make sure you have requirements and dependencies installed properly. [Conda](https://conda.io/miniconda.html) is quick way.
+1. Make sure you have requirements and dependencies installed properly. [Conda](https://conda.io/miniconda.html) is quick way.
+### Conda Install
+```
+conda create --name pangia python=3.3
+conda activate pangia
+conda install -c bioconda -c conda-forge pybedtools minimap2 samtools pandas gawk parallel
+```
+### PIP Install (with python3)
+```
+apt-get update
+apt-get -y install gawk parallel samtools minimap2
+pip install pybedtools pandas
+```
+2. Retrieving PanGIA:
+```
+git clone https://github.com/biofxmriglobal/pangia.git && cd pangia
+```
+3. Download databases:
+```
 
-1. Retrieving PanGIA:
-```
-git clone https://github.com/poeli/pangia.git && cd pangia
-```
-2. Download databases:
-```
-curl -O https://edge-dl.lanl.gov/PanGIA/database/PanGIA_20190830_taxonomy.tar.gz
-curl -O https://edge-dl.lanl.gov/PanGIA/database/PanGIA_20180915_NCBI_genomes_refseq89_BAV.fa.tar
-curl -O https://edge-dl.lanl.gov/PanGIA/database/PanGIA_20190830_NCBI_genomes_refseq89_adds.fa.tar
-curl -O https://edge-dl.lanl.gov/PanGIA/database/PanGIA_20180915_NCBI_genomes_refseq89_Human_GRCh38.p12.fa.tar
-```
-3. Decompress databases. All files will be decompressed to "pangia/database" directory.
-```
-tar -xzf PanGIA_20180915_taxonomy.tar.gz
-tar -xzf PanGIA_20180915_NCBI_genomes_refseq89_BAV.fa.tar
-tar -xzf PanGIA_20180915_NCBI_genomes_refseq89_adds.fa.tar
-tar -xzf PanGIA_20180915_NCBI_genomes_refseq89_Human_GRCh38.p12.fa.tar
 ```
 4. Enjoy.
 
@@ -106,21 +84,6 @@ Run dataset "test.fq" against all PanGIA databases with 24 threads, load QCB_bac
   -st combined \
   -t 24
 ```
-
--------------------------------------------------------------------
-## QUICK PanGIA-VIS
-
-0. PanGIA will cleanup the temp directory after the job is done. Run pangia.py with `--keepTemp` if you want PanGIA-VIS to display genome coverage plot.
-
-1. Install Bokeh > v1.0.
-```
-conda install bokeh
-```
-2. Run `pangia-vis.pl` with PanGIA result file (*.result.tsv). For example:
-```
-pangia-vis.pl pangia_vis/data/test.tsv
-```
-3. Enjoy!
 
 -------------------------------------------------------------------
 ## REPORT
@@ -170,18 +133,11 @@ pangia-vis.pl pangia_vis/data/test.tsv
 ## USAGE
 
 ```
-usage: pangia.py [-h] (-i [FASTQ] [[FASTQ] ...] | -s [SAMFILE])
-                 [-d [[BWA_INDEX] [[BWA_INDEX] ...]]] [-dp [PATH]]
-                 [-asl <INT>] [-ams <INT>] [-ao <STR>] [-se]
-                 [-st {bg,standalone,combined}]
-                 [-m {report,class,extract,lineage}]
-                 [-rf {basic,r,rnb,rnr,ri,patho,score,ref,full,all} [{basic,r,rnb,rnr,ri,patho,score,ref,full,all} ...]]
-                 [-da] [-par <INT>] [-xnm <INT>] [-x [TAXID]] [-r [FIELD]]
-                 [-t <INT>] [-o [DIR]] [-td [DIR]] [-kt] [-p <STR>] [-ps]
-                 [-sb] [-lb [<FILE> [<FILE> ...]]] [-ms <FLOAT>] [-mr <INT>]
-                 [-mb <INT>] [-ml <INT>] [-mc <FLOAT>] [-md <FLOAT>]
-                 [-mrd <FLOAT>] [-np] [-pd] [-if <STR>] [-nc] [-c] [--silent]
-                 [--verbose] [--version]
+usage: pangia.py (-i [FASTQ] [[FASTQ] ...] | -s [SAMFILE])
+                 ([-d [[MMI_INDEX] [[MMI_INDEX] ...]]] | [-dp [PATH]])
+                 [-st {nanopore, illumina}]
+                 [-t <INT>] 
+                 [-o [DIR]]
 
 PanGIA Bioinformatics 1.0.0
 
