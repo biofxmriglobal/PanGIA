@@ -26,7 +26,7 @@ Third-party softwares:
 1. Make sure you have requirements and dependencies installed properly. [Conda](https://conda.io/miniconda.html) is quick way.
 ### Conda Install
 ```
-conda create --name pangia python=3.3
+conda create --name pangia python=3.8
 conda activate pangia
 conda install -c bioconda -c conda-forge pybedtools minimap2 samtools pandas gawk parallel
 ```
