@@ -6,8 +6,6 @@ The software associated web-based user interface for job submission and interact
 
 The docker version is also available at [Docker hub](https://hub.docker.com/r/poeli/pangia). The docker container runs PanGIA-UI that provides a web-based GUI to facilitate users to analyze their datasets through PanGIA and access to results.
 
-[//]: # <p align="center"><img width="40%" height="40%" src='images/pangia-vis-example.png'></p>
-
 -------------------------------------------------------------------
 ## REQUIREMENT
 
